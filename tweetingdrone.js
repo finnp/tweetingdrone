@@ -5,6 +5,7 @@ var cred = require('./cred.js');
 
 var request = require('request');
 var qs = require('querystring');
+var twitter = require('twitter'); // https://github.com/jdub/node-twitter
 
 
 
@@ -14,6 +15,13 @@ var oauth = {
 	'token': cred.ACCESS_TOKEN,
 	'token_secret': cred.ACCESS_SECRET
 }
+
+var twit = new twitter({
+	'consumer_key': cred.CONSUMER_KEY,
+	'consumer_secret': cred.CONSUMER_SECRET,
+	'access_token': cred.ACCESS_TOKEN,
+	'access_token_secret': cred.ACCESS_SECRET
+});
 
 
 var buildURL = function(endpoint, params) {
@@ -78,13 +86,21 @@ var getMentions = function() {
 };
 
 
-tweet('Status ' + Date.now() + ': Not flying.'); // Problem with exclamation mark! (?)
+// tweet('Status ' + Date.now() + ': Not flying.'); // Problem with exclamation mark! (?)
 
 // Check mentions: Only 15 per 15 minutes!
 // Otherwise Stream API??
 
-setInterval(function(){
-	getMentions();
-}, 1000)
+// setInterval(function(){
+// 	getMentions();
+// }, 1000)
 
+// ############# STREAMING API #########
+twit.stream('user', {track:'@saunadrone'}, function(stream) {
+    stream.on('data', function(data) {
+        console.log(data);
+    });
+
+    setTimeout(stream.destroy, 500000);
+});
 
