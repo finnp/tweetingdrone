@@ -19,7 +19,7 @@ var oauth = {
 var twit = new twitter({
 	'consumer_key': cred.CONSUMER_KEY,
 	'consumer_secret': cred.CONSUMER_SECRET,
-	'access_token': cred.ACCESS_TOKEN,
+	'access_token_key': cred.ACCESS_TOKEN,
 	'access_token_secret': cred.ACCESS_SECRET
 });
 
@@ -96,11 +96,9 @@ var getMentions = function() {
 // }, 1000)
 
 // ############# STREAMING API #########
+// {track:'@saunadrone'}
 twit.stream('user', {track:'@saunadrone'}, function(stream) {
-    stream.on('data', function(data) {
-        console.log(data);
-    });
-
-    setTimeout(stream.destroy, 500000);
+  stream.on('data', function (data) {
+    console.log(data.text);
+  });
 });
-
