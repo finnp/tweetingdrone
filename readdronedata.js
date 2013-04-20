@@ -3,27 +3,31 @@ var http    = require('http');
 
 //var datapath = '/home/finn/testdata/';
 
-exports.dronedata = function(datapath) {
+exports.dronedata = function(datapath, statusfunc) {
 	var _this = this;
-	this.png
-	this.status;
+	// this.png
+	// this.status;
 
 
-	setInterval(function() {
-		fs.readFile(datapath + 'status.txt', function (err, data) {
-		  if (err)
-		    throw err;
-		  if (data)
-		    _this.status = data.toString('utf8');
-		});
+	// setInterval(function() {
+	// 	fs.readFile(datapath + 'status.txt', function (err, data) {
+	// 	  if (err)
+	// 	    throw err;
+	// 	  if (data)
+	// 	    _this.status = data.toString('utf8');
+	// 	});
 
-		fs.readFile(datapath + 'camera.png', function(err, data) {
-			if(err)
-				throw err;
-			if (data)
-				_this.png = data;
-		})
-	}, 1000);
+	// 	fs.readFile(datapath + 'camera.png', function(err, data) {
+	// 		if(err)
+	// 			throw err;
+	// 		if (data)
+	// 			_this.png = data;
+	// 	})
+	// }, 1000);
+
+	fs.watchFile(datapath + 'status.txt', function(curr, prev) {
+		statusfunc(curr);
+	});
 
 	return this;
 };
