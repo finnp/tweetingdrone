@@ -25,9 +25,8 @@ exports.tweetingdrone = function() {
 	this.tweet = function(params) {
 		// status -> Text
 		// in_reply_to_status_id -> Answers
-		console.log(params);
+		//console.log(params);
 		var url = this.buildURL('statuses/update.json', params);
-		console.log(url);return;
 		request.post({url: url, oauth: this.oauth}, function (error, response, body) {
 	  		if (!error && response.statusCode == 200) {
 	    		console.log("Tweeted: " + JSON.parse(body).text);
@@ -36,7 +35,6 @@ exports.tweetingdrone = function() {
 	  			console.log(response);
 	  		}
 		});
-
 	};
 
 	// Let's use streaming API instead of getMentions.
