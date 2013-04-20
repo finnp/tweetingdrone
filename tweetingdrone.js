@@ -5,6 +5,7 @@ var cred = require('./cred.js');
 
 var request = require('request');
 var qs = require('querystring');
+var twitter = require('twitter'); // https://github.com/jdub/node-twitter
 
 
 
@@ -15,7 +16,6 @@ var oauth = {
 	'token_secret': cred.ACCESS_SECRET
 }
 
-
 var buildURL = function(endpoint, params) {
 	// endpoint tweeting statuses/update.json
 	var url = 'https://api.twitter.com/1.1/';
@@ -25,10 +25,11 @@ var buildURL = function(endpoint, params) {
 };
 
 
-var tweet = function(status) {
-	var url = buildURL('statuses/update.json', {
-		status: status
-	});
+var tweet = function(params) {
+	// status -> Text
+	// in_reply_to_status_id -> Answers
+
+	var url = buildURL('statuses/update.json', params);
 
 	request.post({url: url, oauth: oauth}, function (error, response, body) {
   		if (!error && response.statusCode == 200) {
@@ -38,7 +39,10 @@ var tweet = function(status) {
   			console.log(response);
   		}
 	});
+
 };
+
+// Let's use streaming API instead of getMentions.
 
 var lastTweetId = '325336774140387328';
 var getMentionsBlocked = false;
@@ -78,13 +82,44 @@ var getMentions = function() {
 };
 
 
-tweet('Status ' + Date.now() + ': Not flying.'); // Problem with exclamation mark! (?)
+// tweet('Status ' + Date.now() + ': Not flying.'); // Problem with exclamation mark! (?)
 
-// Check mentions: Only 15 per 15 minutes!
-// Otherwise Stream API??
-
-setInterval(function(){
-	getMentions();
-}, 1000)
+// ############# STREAMING API #########
 
 
+
+var twit = new twitter({ // Could also be used for the basic stuff
+	'consumer_key': cred.CONSUMER_KEY,
+	'consumer_secret': cred.CONSUMER_SECRET,
+	'access_token_key': cred.ACCESS_TOKEN,
+	'access_token_secret': cred.ACCESS_SECRET
+});
+
+twit.stream('user', {track:'@saunadrone'}, function(stream) {
+  stream.on('data', function (data) {
+  	if(data.text) {
+  		console.log(data.text);
+  		if(data.user.screen_name !== 'saunadrone') {
+	  		var status = '@' + data.user.screen_name + ' I am not flying, yet.'
+		    tweet({
+		    	status: status,
+		    	in_reply_to_status_id: data['id_str']
+		    })  			
+  		}
+  	}
+
+  });
+});
+
+// ####### Socket connection #######
+
+// client
+var io = require('socket.io-client');
+
+var socket = io.connect('http://localhost:8080');
+socket.on('connect', function() {
+	socket.on('message', function(data){
+		console.log(data);
+		tweet({status: data});
+	})
+});
