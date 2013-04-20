@@ -2,7 +2,7 @@ var fs = require('fs');
 tweetingdrone = require('./tweetingdrone').tweetingdrone;
 var td = new tweetingdrone();
 //td.getMentions();
-//td.setupStream();
+td.setupStream();
 //td.tweetImage({status: 'test', in_reply_to: '325574939467997184'}, 'logo.png');
 
 

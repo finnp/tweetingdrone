@@ -171,7 +171,7 @@ exports.tweetingdrone = function() {
 			    // 	status: status,
 			    // 	in_reply_to_status_id: data['id_str']
 			    // });
-  				_this.tweetImage(status, path + 'camera.png');
+  				_this.tweetImage({status: status, in_reply_to_status_id: data['id_str']}, path + 'camera.png');
   			});
   		}
   	}
