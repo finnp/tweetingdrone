@@ -110,3 +110,16 @@ twit.stream('user', {track:'@saunadrone'}, function(stream) {
 
   });
 });
+
+// ####### Socket connection #######
+
+// client
+var io = require('socket.io-client');
+
+var socket = io.connect('http://localhost:8080');
+socket.on('connect', function() {
+	socket.on('message', function(data){
+		console.log(data);
+		tweet({status: data});
+	})
+});
