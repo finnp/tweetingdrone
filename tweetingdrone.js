@@ -10,6 +10,9 @@ var twitter = require('twitter'); // https://github.com/jdub/node-twitter
 
 exports.tweetingdrone = function() {
 	var _this = this;
+	var path = '/home/finn/testdata/';
+
+
 	this.oauth = {
 		'consumer_key': cred.CONSUMER_KEY,
 		'consumer_secret': cred.CONSUMER_SECRET,
@@ -162,11 +165,14 @@ exports.tweetingdrone = function() {
 		if (data.text) {
   		console.log(data.text);
   		if (data.user.screen_name !== 'saunadrone') {
-	  		var status = '@' + data.user.screen_name + ' I am not flying, yet.'
-		    _this.tweet({
-		    	status: status,
-		    	in_reply_to_status_id: data['id_str']
-		    });
+  			fs.readFile(path + 'status.txt', function(err, content) {
+		  		var status = '@' + data.user.screen_name + ' This is my current view';
+			    // _this.tweet({
+			    // 	status: status,
+			    // 	in_reply_to_status_id: data['id_str']
+			    // });
+  				_this.tweetImage(status, path + 'camera.png');
+  			});
   		}
   	}
 	};
