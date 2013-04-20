@@ -28,7 +28,6 @@ exports.tweetingdrone = function() {
 	this.tweet = function(params) {
 		// status -> Text
 		// in_reply_to_status_id -> Answers
-		//console.log(params);
 		var url = this.buildURL('statuses/update.json', params);
 		request.post({url: url, oauth: this.oauth}, function (error, response, body) {
 	  		if (!error && response.statusCode == 200) {
@@ -40,16 +39,14 @@ exports.tweetingdrone = function() {
 		});
 	};
 
-	// Let's use streaming API instead of getMentions.
-
 	this.lastTweetId = '325336774140387328';
 	this.getMentionsBlocked = false;
 
 	this.getMentions = function() {
 		// We want to make sure to only get each tweet once (?)
 		if(this.getMentionsBlocked) {
-			console.log("Error getMentions is currently working.")
-			return
+			console.log("Error getMentions is currently working.");
+			return;
 		}
 
 		this.getMentionsBlocked = true;
@@ -67,7 +64,6 @@ exports.tweetingdrone = function() {
 					json.forEach(function(tweet){
 							console.log("Mentioned: " + tweet.text);
 					});
-					//_this.tweet({status: 'Status ' + Date.now() + ': Not flying.'}); // Problem with exclamation mark! (?)
 				} else {
 					console.log("No new tweet.")
 				}
@@ -76,9 +72,11 @@ exports.tweetingdrone = function() {
 				console.log(body);
 			}
 			_this.getMentionsBlocked = false; // Open for next request
-		})
+		});
 	};
 
+	// mostly from here:
+	// http://stackoverflow.com/questions/12921371/posting-images-to-twitter-in-node-js-using-oauth
 	this.tweetImage = function(tweet, fileName) {
 		var oa = new OAuth(
     	'https://api.twitter.com/oauth/request_token',
@@ -155,17 +153,16 @@ exports.tweetingdrone = function() {
 		request.end();
 	};
 
-	// 
 	this.onStreamData = function(data) {
 		console.log('onStreamData');
-		if(data.text) {
+		if (data.text) {
   		console.log(data.text);
-  		if(data.user.screen_name !== 'saunadrone') {
+  		if (data.user.screen_name !== 'saunadrone') {
 	  		var status = '@' + data.user.screen_name + ' I am not flying, yet.'
 		    _this.tweet({
 		    	status: status,
 		    	in_reply_to_status_id: data['id_str']
-		    })  			
+		    });
   		}
   	}
 	};
