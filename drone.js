@@ -3,7 +3,8 @@ tweetingdrone = require('./tweetingdrone').tweetingdrone;
 var td = new tweetingdrone();
 //td.getMentions();
 //td.setupStream();
-//td.tweetImage('testing...', 'logo.png');
+//td.tweetImage({status: 'test', in_reply_to: '325574939467997184'}, 'logo.png');
+
 
 var statusFile ='/home/finn/testdata/status.txt'
 

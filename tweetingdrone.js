@@ -77,7 +77,7 @@ exports.tweetingdrone = function() {
 
 	// mostly from here:
 	// http://stackoverflow.com/questions/12921371/posting-images-to-twitter-in-node-js-using-oauth
-	this.tweetImage = function(tweet, fileName) {
+	this.tweetImage = function(params, fileName) {
 		var oa = new OAuth(
     	'https://api.twitter.com/oauth/request_token',
     	'https://api.twitter.com/oauth/access_token',
@@ -95,7 +95,7 @@ exports.tweetingdrone = function() {
 		var contents = separator + crlf
 	    + 'Content-Disposition: form-data; name="status"' + crlf
 	    + crlf
-	    + tweet + crlf
+	    //+ params.status + crlf
 	    + separator + crlf
 	    + fileHeader + crlf
 	    + 'Content-Type: image/png' +  crlf
@@ -111,8 +111,12 @@ exports.tweetingdrone = function() {
 		var accessToken = cred.ACCESS_TOKEN;
 		var tokenSecret = cred.ACCESS_SECRET;
 		
+		var url = 'https://upload.twitter.com/1/statuses/update_with_media.json?';
+		url += qs.stringify(params);
+		//console.log(url);return;
+		
 		var authorization = oa.authHeader(
-	    'https://upload.twitter.com/1/statuses/update_with_media.json',
+	  	url,
 	    accessToken,
 	    tokenSecret,
 	    'POST'
@@ -129,7 +133,7 @@ exports.tweetingdrone = function() {
 		var options = {
 		    host: hostname,
 		    port: 443,
-		    path: '/1/statuses/update_with_media.json',
+		    path: '/1/statuses/update_with_media.json?'+qs.stringify(params),
 		    method: 'POST',
 		    headers: headers
 		};
